@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Your Cart | Modern Shop</title>
+    <style>
+        body { background-color: #f1f3f6; }
+        .checkout-btn { background-color: #fb641b; border-color: #fb641b; color: white; transition: background 0.3s; }
+        .checkout-btn:hover { background-color: #e65a19; color: white; }
+        
+        /* Quantity Box Styling */
+        .qty-box { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border: 1px solid #ced4da; 
+            border-radius: 4px; 
+            width: fit-content;
+            overflow: hidden;
+            background: #fff;
+        }
+        .qty-link { 
+            padding: 2px 12px; 
+            text-decoration: none; 
+            color: #2874f0; 
+            font-weight: bold; 
+            font-size: 1.2rem;
+            transition: background 0.2s;
+        }
+        .qty-link:hover { background: #f1f3f6; color: #1e5cc2; }
+        .qty-value { border-left: 1px solid #ced4da; border-right: 1px solid #ced4da; padding: 2px 15px; min-width: 45px; text-align: center; }
+
+        .remove-link { font-size: 0.85rem; color: #dc3545; text-decoration: none; font-weight: 600; margin-top: 10px; display: inline-block; }
+        .remove-link:hover { color: #a71d2a; text-decoration: underline; }
+        .product-img { object-fit: contain; height: 100px; width: 100px; }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-primary mb-4 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}"><i class="fas fa-shopping-bag me-2"></i>Modern Shop</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mb-4">
+                <div class="card p-3 shadow-sm border-0">
+                    <h4 class="mb-3">My Cart ({{ cart_items|length }})</h4>
+                    <hr>
+                    
+                    {% for item in cart_items %}
+                    <div class="d-flex align-items-center mb-3 p-2">
+                        <img src="{{ item.product.image.url }}" class="me-3 rounded shadow-sm product-img">
+                        
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">{{ item.product.name }}</h5>
+                            <p class="text-success fw-bold mb-2">₹{{ item.product.price }} each</p>
+                            
+                            <div class="qty-box mb-2">
+                                <a href="{% url 'reduce_quantity' item.product.id %}" class="qty-link">−</a>
+                                <span class="qty-value fw-bold">{{ item.quantity }}</span>
+                                <a href="{% url 'add_quantity' item.product.id %}" class="qty-link">+</a>
+                            </div>
+
+                            <a href="{% url 'remove_from_cart' item.product.id %}" class="remove-link">
+                                <i class="fas fa-trash-alt me-1"></i> REMOVE ITEM
+                            </a>
+                        </div>
+
+                        <div class="text-end">
+                            <h5 class="text-dark fw-bold">₹{{ item.total_price }}</h5>
+                        </div>
+                    </div>
+                    <hr>
+                    {% empty %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-shopping-basket fa-3x text-muted mb-3"></i>
+                        <h5>Your cart is empty!</h5>
+                        <p class="text-muted">Add some items to your cart to see them here.</p>
+                        <a href="{% url 'home' %}" class="btn btn-primary mt-2">Shop Now</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card p-3 shadow-sm border-0">
+                    <h5 class="text-muted mb-3 text-uppercase small fw-bold">Price Details</h5>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Price ({{ cart_items|length }} items):</span>
+                        <span>₹{{ grand_total }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Delivery Charges:</span>
+                        <span class="text-success">FREE</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <h5 class="fw-bold">Total Amount:</h5>
+                        <h4 class="text-primary fw-bold">₹{{ grand_total }}</h4>
+                    </div>
+                    
+                    {% if cart_items %}
+                    <a href="{% url 'payment_page' %}" class="btn checkout-btn w-100 py-2 fw-bold shadow-sm text-uppercase">
+                        Proceed to Checkout
+                    </a>
+                    {% else %}
+                    <button class="btn btn-secondary w-100 py-2 fw-bold" disabled>
+                        CART EMPTY
+                    </button>
+                    {% endif %}
+                    
+                    <p class="text-muted mt-3 small text-center">
+                        <i class="fas fa-shield-alt text-success me-1"></i> Safe and Secure Payments.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-4 mt-5 text-muted small">
+        &copy; 2026 Modern Shop Project. 
+    </footer>
+</body>
+</html>
